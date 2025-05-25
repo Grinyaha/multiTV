@@ -758,12 +758,16 @@ class multiTV
             $rowsres = json_decode($rows[0]['properties'], 1);
 
             $tiny7 = "";
-            if (!empty($rowsres['multitv_file_theme'][0]['value'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
-            if(!empty($tiny7)) {
-                $tiny7 .= '<script>
+            if (!empty($rowsres['multitv_file_theme'][0]['value']))
+
+                $tiny7 = '
+                <script>
                 which_editor = "TinyMCE7";
-            </script>';
-            }
+                lang = "'.$this->modx->getConfig('manager_language').'";
+                    if(lang == "ru" || lang == "russian-UTF8" || lang == "russian") lang = "ru";
+    else lang = "en";
+                </script>
+                <script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
 
             $files['scripts'] = array_merge($files['scripts'], array('js/multitvhelper' . $this->cmsinfo['seturl'] . '.js', 'js/multitv.js'));
             $scriptfiles[] = $tiny7;
@@ -940,11 +944,16 @@ class multiTV
         $rowsres = json_decode($rows[0]['properties'], 1);
 
         $tiny7 = "";
-        if (!empty($rowsres['multitv_file_theme'][0]['value'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
-        if(!empty($tiny7)) {
-            $tiny7 .= '<script>
+
+        if (!empty($rowsres['multitv_file_theme'][0]['value'])) {
+            $tiny7 = '
+                <script>
                 which_editor = "TinyMCE7";
-            </script>';
+                lang = "'.$this->modx->getConfig('manager_language').'";
+                if(lang == "ru" || lang == "russian-UTF8" || lang == "russian") lang = "ru";
+                else lang = "en";
+                </script>
+                <script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
         }
 
         $files['scripts'] = array_merge($files['scripts'], array('js/multitvhelper' . $this->cmsinfo['seturl'] . '.js', 'js/multitv.js'));

@@ -452,7 +452,7 @@
                 $('.inlineTabEditor:not(.initialized)', el).each(function () {
                     //add TinyMCE7 by Alexander Grishin
                     if(which_editor !== null && which_editor == 'TinyMCE7') {
-                        tinymce.init(tmce_mtvinit('#' + jQuery(this).attr('id')));
+                        tinymce.init(tmce_mtvinit('#' + jQuery(this).attr('id'), lang));
                     }
                     else {
                         //Dmi3yy add inline tinyMCE 4
