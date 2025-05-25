@@ -753,8 +753,8 @@ class multiTV
             $cssfiles[] = '	<link rel="stylesheet" type="text/css" href="' . $tvpath . $file . '" />';
         }
         if ($this->cmsinfo['clipper'] != 'Clipper') {
-            $query = evo()->getDatabase()->query("SELECT properties FROM " . evo()->getDatabase()->getFullTableName('site_plugins') . " WHERE name='TinyMCE7' AND disabled = 0 ");
-            $rows = evo()->getDatabase()->makeArray($query);
+            $query = $this->modx->db->query( "SELECT properties FROM " . evo()->getDatabase()->getFullTableName('site_plugins') . " WHERE name='TinyMCE7' AND disabled = 0 ");
+            $rows = $this->modx->db->makeArray($query);
             $rowsres = json_decode($rows[0]['properties'], 1);
 
             $tiny7 = "";
@@ -935,8 +935,8 @@ class multiTV
         foreach ($files['css'] as $file) {
             $cssfiles[] = '	<link rel="stylesheet" type="text/css" href="' . $modulepath . $file . '" />';
         }
-        $query = evo()->getDatabase()->query("SELECT properties FROM " . evo()->getDatabase()->getFullTableName('site_plugins') . " WHERE name='TinyMCE7' AND disabled = 0 ");
-        $rows = evo()->getDatabase()->makeArray($query);
+        $query = $this->modx->db->query( "SELECT properties FROM " . evo()->getDatabase()->getFullTableName('site_plugins') . " WHERE name='TinyMCE7' AND disabled = 0 ");
+        $rows = $this->modx->db->makeArray($query);
         $rowsres = json_decode($rows[0]['properties'], 1);
 
         $tiny7 = "";
