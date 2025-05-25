@@ -447,33 +447,42 @@
             _this.initRichtext(_this.fieldList, _this);
         },
         initRichtext: function(el, _this) {
-            //Dmi3yy add inline tinyMCE
             if (typeof tinyMCE !== 'undefined' && (_this.options.mode == 'vertical' || _this.options.mode == 'single') ) {
-                $('.inlineTabEditor:not(.initialized)', el).each(function () {
-                    $(this).addClass('initialized');
-                    var editorId = $(this).attr('id');
-                    var theme = $(this).data('theme');
-                    if (tinyMCE.majorVersion == 4) {
-                        if (modxRTEbridge_tinymce4 != undefined) {
 
-                            var configObj = theme != undefined ? window['config_tinymce4_'+theme] : window[modxRTEbridge_tinymce4.default];
-                            var newConfig = {};
-                            for (var key in configObj) {
-                                newConfig[key] = configObj[key];
-                            }
-                            newConfig['selector'] = '#' + editorId;
-                            newConfig['setup'] = function(ed) { ed.on("change", function(e) { documentDirty=true; tinymce.triggerSave(); jQuery('#'+_this.tvid).transformField("saveMultiValue"); }); };
-                            tinyMCE.init(newConfig);
-                        } else {
-                            tinyMCE.execCommand('mceAddEditor', false, editorId);
-                        }
-                    } else {
-                        tinyMCE.execCommand('mceAddControl', false, editorId);
+                $('.inlineTabEditor:not(.initialized)', el).each(function () {
+                    //add TinyMCE7 by Alexander Grishin
+                    let tiny_version = localStorage.getItem('tiny_version');
+                    if(tiny_version !== null && tiny_version == 'TinyMCE7') {
+                        tinymce.init(tmce_mtvinit('#' + jQuery(this).attr('id')));
                     }
-                    tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_ifr'), 'height', '200px');
-                    tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_tbl'), 'height', 'auto');
-                    tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_ifr'), 'width', '100%');
-                    tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_tbl'), 'width', '100%');
+                    else {
+                        //Dmi3yy add inline tinyMCE 4
+                        $(this).addClass('initialized');
+                        var editorId = $(this).attr('id');
+                        var theme = $(this).data('theme');
+                        if (tinyMCE.majorVersion == 4) {
+                            if (modxRTEbridge_tinymce4 != undefined) {
+
+                                var configObj = theme != undefined ? window['config_tinymce4_'+theme] : window[modxRTEbridge_tinymce4.default];
+                                var newConfig = {};
+                                for (var key in configObj) {
+                                    newConfig[key] = configObj[key];
+                                }
+                                newConfig['selector'] = '#' + editorId;
+                                newConfig['setup'] = function(ed) { ed.on("change", function(e) { documentDirty=true; tinymce.triggerSave(); jQuery('#'+_this.tvid).transformField("saveMultiValue"); }); };
+                                tinyMCE.init(newConfig);
+                            } else {
+                                tinyMCE.execCommand('mceAddEditor', false, editorId);
+                            }
+                        } else {
+                            tinyMCE.execCommand('mceAddControl', false, editorId);
+                        }
+                        tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_ifr'), 'height', '200px');
+                        tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_tbl'), 'height', 'auto');
+                        tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_ifr'), 'width', '100%');
+                        tinyMCE.DOM.setStyle(tinyMCE.DOM.get(editorId + '_tbl'), 'width', '100%');
+
+                    }
                 });
             } else if (typeof CKEDITOR !== 'undefined' && CKEDITOR.version.substr(0,1) == 4) {
                 $('.inlineTabEditor:not(.initialized)', el).each(function () {
@@ -769,6 +778,7 @@
                                     data: aoData,
                                     success: fnCallback
                                 });
+
                             },
                             aoColumns: _this.options.fieldsettings.fieldcolumns,
                             bAutoWidth: false,
@@ -966,6 +976,7 @@
                 }
             } else {
                 _this.data.value = [];
+
             }
         },
         setThumbnail: function (path, name, el) {

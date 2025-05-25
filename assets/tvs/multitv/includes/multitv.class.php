@@ -364,7 +364,7 @@ class multiTV
     // invoke modx renderFormElement and change the output (to multiTV demands)
     function renderMultiTVFormElement($fieldType, $fieldName, $fieldElements, $fieldClass, $fieldDefault)
     {
-        global $which_editor;
+        $which_editor = $this->modx->getConfig('which_editor');
         $fieldName .= '_mtv';
         $currentScript = array();
         $currentClass = array();
@@ -395,12 +395,15 @@ class multiTV
                 break;
             case 'richtext' :
                 if ($this->display == 'datatable' || $this->display == 'dbtable' || $this->options['type'] == 'module') {
+
                     $this->fieldsrte[] = ($this->options['type'] == 'module') ? $fieldName : "tv" . $this->tvID . $fieldName;
                     // invoke OnRichTextEditorInit event for TinyMCE4
                     $fieldId = substr($fieldName, 0, -4);
                     $theme = isset($this->fields[$fieldId]['theme']) ? $this->fields[$fieldId]['theme'] : '';
+
                     if ($theme) {
-                        if (in_array($which_editor, array('TinyMCE4', 'CKEditor4'))) {
+
+                        if (in_array($which_editor, array('TinyMCE4', 'CKEditor4', 'TinyMCE7'))) {
                             $evtOut = $this->modx->invokeEvent('OnRichTextEditorInit', array(
                                 'editor' => $which_editor,
                                 'options' => array('theme' => $theme)
@@ -416,21 +419,26 @@ class multiTV
                     $fieldId = substr($fieldName, 0, -4);
                     $theme = isset($this->fields[$fieldId]['theme']) ? $this->fields[$fieldId]['theme'] : '';
                     if ($theme) {
-                        if (in_array($which_editor, array('TinyMCE4', 'CKEditor4'))) {
+
+                        if (in_array($which_editor, array('TinyMCE4', 'CKEditor4', 'TinyMCE7'))) {
+
                             $evtOut = $this->modx->invokeEvent('OnRichTextEditorInit', array(
                                 'editor' => $which_editor,
                                 'options' => array('theme' => $theme)
                             ));
                             if (is_array($evtOut))
+
                                 $evtOut = implode('', $evtOut);
                         };
                     }
                     $fieldClass[] = 'inlineTabEditor';
                 } else{
                     $fieldType = 'textarea';
+
                 }
                 break;
         }
+
         $formElement = $evtOut . renderFormElement($fieldType, 0, '', $fieldElements, '', '', array());
         $formElement = ($theme) ? str_replace('id="', 'data-theme="' . $theme . '" id="', $formElement) : $formElement; // add optional richtext-theme
         $formElement = preg_replace('/( tvtype=\"[^\"]+\")/', '', $formElement); // remove tvtype attribute
@@ -744,15 +752,26 @@ class multiTV
             $cssfiles[] = '	<link rel="stylesheet" type="text/css" href="' . $tvpath . $file . '" />';
         }
         if ($this->cmsinfo['clipper'] != 'Clipper') {
+            $tiny7= "";
+            if(!empty($_SESSION['multitv_file_theme'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/'.$_SESSION['multitv_file_theme'].'"></script>';
+            $tiny7 .= '<script>
+                localStorage.setItem("tiny_version", "'.$this->modx->getConfig('which_editor').'");
+            </script>';
+
+
             $files['scripts'] = array_merge($files['scripts'], array('js/multitvhelper' . $this->cmsinfo['seturl'] . '.js', 'js/multitv.js'));
+            $scriptfiles[] = $tiny7;
             foreach ($files['scripts'] as $file) {
                 $scriptfiles[] = '	<script type="text/javascript" src="' . $tvpath . $file . '"></script>';
             }
+
         } else {
+
             $files['scripts'] = array_merge($files['scripts'], array(
                 array('name' => 'multitvhelper', 'path' => 'js/multitvhelperclipper' . $this->cmsinfo['seturl'] . '.js'),
                 array('name' => 'multitv', 'path' => 'js/multitv.js'),
             ));
+
             foreach ($files['scripts'] as $file) {
                 $scriptfiles[] = $this->modx->getJqueryPluginTag($file['name'], $tvpath . $file['path'], false);
             }
@@ -910,7 +929,11 @@ class multiTV
         foreach ($files['css'] as $file) {
             $cssfiles[] = '	<link rel="stylesheet" type="text/css" href="' . $modulepath . $file . '" />';
         }
+        $tiny7= "";
+        if(!empty($_SESSION['multitv_file_theme'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/'.$_SESSION['multitv_file_theme'].'"></script>';
+
         $files['scripts'] = array_merge($files['scripts'], array('js/multitvhelper' . $this->cmsinfo['seturl'] . '.js', 'js/multitv.js'));
+        $scriptfiles[] = $tiny7;
         foreach ($files['scripts'] as $file) {
             $scriptfiles[] = '	<script type="text/javascript" src="' . $modulepath . $file . '"></script>';
         }
@@ -1024,6 +1047,7 @@ class multiTV
         if (isset($tvOutput['fieldValue'])) {
             $tvOutput = $tvOutput['fieldValue'];
         }
+
         return $tvOutput;
     }
 
@@ -1367,6 +1391,7 @@ class multiTV
     }
 
     public function doPrepare($functions, $params) {
+
         foreach ($functions as $function) {
             if (is_callable($function)) {
                 $params['data'] = call_user_func_array($function, $params);
@@ -1380,6 +1405,8 @@ class multiTV
 
     public function prepareRow($data)
     {
+
+
         if (empty($this->_prepareFunctions)) {
             return $data;
         }
