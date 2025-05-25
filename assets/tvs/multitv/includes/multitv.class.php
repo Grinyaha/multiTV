@@ -413,8 +413,8 @@ class multiTV
                         };
                     }
                     $fieldClass[] = 'tabEditor';
-                } elseif( $this->display == 'vertical' || $this->display == 'single'){
-                   $this->fieldsrte[] = ($this->options['type'] == 'module') ? $fieldName : "tv" . $this->tvID . $fieldName;
+                } elseif ($this->display == 'vertical' || $this->display == 'single') {
+                    $this->fieldsrte[] = ($this->options['type'] == 'module') ? $fieldName : "tv" . $this->tvID . $fieldName;
                     // invoke OnRichTextEditorInit event for TinyMCE4
                     $fieldId = substr($fieldName, 0, -4);
                     $theme = isset($this->fields[$fieldId]['theme']) ? $this->fields[$fieldId]['theme'] : '';
@@ -432,7 +432,7 @@ class multiTV
                         };
                     }
                     $fieldClass[] = 'inlineTabEditor';
-                } else{
+                } else {
                     $fieldType = 'textarea';
 
                 }
@@ -541,7 +541,8 @@ class multiTV
                     $default = (isset($this->fields[$fieldname]['default'])) ? $this->fields[$fieldname]['default'] : '';
                     if (!empty($this->fields[$fieldname]['width'])) {
                         $unit = (substr($this->fields[$fieldname]['width'], -1) == '%') ? '' : 'px';
-                        $tvcss .= '.multitv #[+tvid+]list li.element .mtv_' . $fieldname . ' { width: ' . $this->fields[$fieldname]['width'] . $unit . ' !important }' . "\r\n";                    }
+                        $tvcss .= '.multitv #[+tvid+]list li.element .mtv_' . $fieldname . ' { width: ' . $this->fields[$fieldname]['width'] . $unit . ' !important }' . "\r\n";
+                    }
                     switch ($type) {
                         case 'crop':
                             $tvelement[] = '<label for="' . $tvid . $fieldname . '">' . $this->fields[$fieldname]['caption'] . '</label>';
@@ -663,8 +664,8 @@ class multiTV
                                 $tvElements[] = '<div class="mtvThumb" id="' . $tvid . $this->fields[$fieldname]['thumbof'] . '_mtvpreview"></div>';
                                 break;
                             case 'color':
-                                $tvelement[] = '<label for="' . $tvid . $fieldname . '">' . $caption . '</label>'.
-                                $this->renderMultiTVFormElement($type, $fieldname, $elements, 'jscolor mtv_' . $fieldname, $default) . "\r\n";
+                                $tvelement[] = '<label for="' . $tvid . $fieldname . '">' . $caption . '</label>' .
+                                    $this->renderMultiTVFormElement($type, $fieldname, $elements, 'jscolor mtv_' . $fieldname, $default) . "\r\n";
                                 break;
                             default:
                                 $tvElements[] = '<label for="' . $tvid . $fieldname . '">' . $caption . '</label>' .
@@ -752,12 +753,17 @@ class multiTV
             $cssfiles[] = '	<link rel="stylesheet" type="text/css" href="' . $tvpath . $file . '" />';
         }
         if ($this->cmsinfo['clipper'] != 'Clipper') {
-            $tiny7= "";
-            if(!empty($_SESSION['multitv_file_theme'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/'.$_SESSION['multitv_file_theme'].'"></script>';
-            $tiny7 .= '<script>
-                localStorage.setItem("tiny_version", "'.$this->modx->getConfig('which_editor').'");
-            </script>';
+            $query = evo()->getDatabase()->query("SELECT properties FROM " . evo()->getDatabase()->getFullTableName('site_plugins') . " WHERE name='TinyMCE7' AND disabled = 0 ");
+            $rows = evo()->getDatabase()->makeArray($query);
+            $rowsres = json_decode($rows[0]['properties'], 1);
 
+            $tiny7 = "";
+            if (!empty($rowsres['multitv_file_theme'][0]['value'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
+            if(!empty($tiny7)) {
+                $tiny7 .= '<script>
+                which_editor = "TinyMCE7";
+            </script>';
+            }
 
             $files['scripts'] = array_merge($files['scripts'], array('js/multitvhelper' . $this->cmsinfo['seturl'] . '.js', 'js/multitv.js'));
             $scriptfiles[] = $tiny7;
@@ -865,7 +871,7 @@ class multiTV
                         break;
                     case 'color':
                         $tvElements[] = '<label for="' . $config['table'] . $fieldname . '_mtv">' . $caption . '</label>' .
-                        $this->renderMultiTVFormElement($type, $fieldname, $elements, 'jscolor mtv_' . $fieldname, $default) . "\r\n";
+                            $this->renderMultiTVFormElement($type, $fieldname, $elements, 'jscolor mtv_' . $fieldname, $default) . "\r\n";
                         break;
                     default:
                         $tvElements[] = '<label for="' . $config['table'] . $fieldname . '_mtv">' . $caption . '</label>' .
@@ -929,8 +935,17 @@ class multiTV
         foreach ($files['css'] as $file) {
             $cssfiles[] = '	<link rel="stylesheet" type="text/css" href="' . $modulepath . $file . '" />';
         }
-        $tiny7= "";
-        if(!empty($_SESSION['multitv_file_theme'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/'.$_SESSION['multitv_file_theme'].'"></script>';
+        $query = evo()->getDatabase()->query("SELECT properties FROM " . evo()->getDatabase()->getFullTableName('site_plugins') . " WHERE name='TinyMCE7' AND disabled = 0 ");
+        $rows = evo()->getDatabase()->makeArray($query);
+        $rowsres = json_decode($rows[0]['properties'], 1);
+
+        $tiny7 = "";
+        if (!empty($rowsres['multitv_file_theme'][0]['value'])) $tiny7 = '<script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
+        if(!empty($tiny7)) {
+            $tiny7 .= '<script>
+                which_editor = "TinyMCE7";
+            </script>';
+        }
 
         $files['scripts'] = array_merge($files['scripts'], array('js/multitvhelper' . $this->cmsinfo['seturl'] . '.js', 'js/multitv.js'));
         $scriptfiles[] = $tiny7;
@@ -1042,7 +1057,7 @@ class multiTV
                 break;
         }
         $tvOutput = $tvOutput[$this->tvName];
-       	if(empty($tvOutput)) $tvOutput = '[]';
+        if (empty($tvOutput)) $tvOutput = '[]';
         $tvOutput = json_decode($tvOutput, true);
         if (isset($tvOutput['fieldValue'])) {
             $tvOutput = $tvOutput['fieldValue'];
@@ -1143,7 +1158,7 @@ class multiTV
         $maskedTags = array('((' => '[+', '))' => '+]');
         $params['outerTpl'] = str_replace(array_keys($maskedTags), array_values($maskedTags), $params['outerTpl']);
         $params['rowTpl'] = str_replace(array_keys($maskedTags), array_values($maskedTags), $params['rowTpl']);
-        if(is_array($tvOutput)){
+        if (is_array($tvOutput)) {
             $countOutput = count($tvOutput);
         } else {
             $countOutput = 0;
@@ -1216,15 +1231,15 @@ class multiTV
             }
 
             $value = $this->prepareRow(array_merge([
-                'docid'     => $params['docid'],
+                'docid' => $params['docid'],
                 'iteration' => $iteration,
-                'row'       => [
+                'row' => [
                     'number' => $i,
-                    'total'  => $countOutput,
+                    'total' => $countOutput,
                 ],
             ], $value));
 
-            if($value == false) continue;
+            if ($value == false) continue;
 
 
             if (!$params['toJson']) {
@@ -1268,11 +1283,11 @@ class multiTV
         } else {
             if (!$params['toJson']) {
                 $wrap = $this->prepareWrap([
-                    'docid'   => $params['docid'],
+                    'docid' => $params['docid'],
                     'wrapper' => $wrapper,
-                    'rows'    => [
+                    'rows' => [
                         'offset' => $params['offset'],
-                        'total'  => $countOutput,
+                        'total' => $countOutput,
                     ],
                 ]);
 
@@ -1390,7 +1405,8 @@ class multiTV
         }
     }
 
-    public function doPrepare($functions, $params) {
+    public function doPrepare($functions, $params)
+    {
 
         foreach ($functions as $function) {
             if (is_callable($function)) {
@@ -1412,8 +1428,8 @@ class multiTV
         }
 
         return $this->doPrepare($this->_prepareFunctions, [
-            'data'     => $data,
-            'modx'     => $this->modx,
+            'data' => $data,
+            'modx' => $this->modx,
             '_multiTV' => $this,
         ]);
     }
@@ -1425,8 +1441,8 @@ class multiTV
         }
 
         return $this->doPrepare($this->_prepareWrapFunctions, [
-            'data'     => $data,
-            'modx'     => $this->modx,
+            'data' => $data,
+            'modx' => $this->modx,
             '_multiTV' => $this,
         ]);
     }

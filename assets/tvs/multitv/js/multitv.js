@@ -451,8 +451,7 @@
 
                 $('.inlineTabEditor:not(.initialized)', el).each(function () {
                     //add TinyMCE7 by Alexander Grishin
-                    let tiny_version = localStorage.getItem('tiny_version');
-                    if(tiny_version !== null && tiny_version == 'TinyMCE7') {
+                    if(which_editor !== null && which_editor == 'TinyMCE7') {
                         tinymce.init(tmce_mtvinit('#' + jQuery(this).attr('id')));
                     }
                     else {
