@@ -765,7 +765,7 @@ class multiTV
                 which_editor = "TinyMCE7";
                 lang = "'.$this->modx->getConfig('manager_language').'";
                     if(lang == "ru" || lang == "russian-UTF8" || lang == "russian") lang = "ru";
-    else lang = "en";
+
                 </script>
                 <script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
 
@@ -951,7 +951,7 @@ class multiTV
                 which_editor = "TinyMCE7";
                 lang = "'.$this->modx->getConfig('manager_language').'";
                 if(lang == "ru" || lang == "russian-UTF8" || lang == "russian") lang = "ru";
-                else lang = "en";
+
                 </script>
                 <script type="text/javascript" src="/assets/plugins/tinymce7/themes/multitv/' . $rowsres['multitv_file_theme'][0]['value'] . '"></script>';
         }
